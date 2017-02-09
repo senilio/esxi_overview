@@ -239,9 +239,11 @@ def main():
 		except OSError:
 			pass
 
-    os.rename('{}/{}'.format(config.get('main', 'OutputPath'), config.get('main', 'OutputFile')),
-              '{}/1.html'.format(config.get('main', 'OutputPath')))
-
+    try:
+        os.rename('{}/{}'.format(config.get('main', 'OutputPath'), config.get('main', 'OutputFile')),
+                  '{}/1.html'.format(config.get('main', 'OutputPath')))
+    except OSError:
+        pass
 
     #print(vms)
     ### Start generating HTML
