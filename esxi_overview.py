@@ -227,17 +227,19 @@ def main():
         hosts[host]['memoryUsage'] 				= memoryUsage / 1024
         hosts[host]['cpuUsage']    				= vcpuUsage
         hosts[host]['runningVMs']  				= runningVMs
-        hosts[host]['memoryUsagePercentage'] 	= int(float(hosts[host]['memoryUsage']) / float(hosts[host]['memSize']) * 100)
-        hosts[host]['cpuUsagePercentage']    	= int(float(hosts[host]['cpuUsage']) / float(hosts[host]['numCores']) * 100)
+        hosts[host]['memoryUsagePercentage'] 	= int(float(hosts[host]['memoryUsage']) /
+                                                    float(hosts[host]['memSize']) * 100)
+        hosts[host]['cpuUsagePercentage']    	= int(float(hosts[host]['cpuUsage']) /
+                                                    float(hosts[host]['numCores']) * 100)
 
 
 	# Shift historic files
-	for i in range(46, 0, -1):
-		try:
-			os.rename('{}/{}.html'.format(config.get('main', 'OutputPath'), i),
+    for i in range(46, 0, -1):
+        try:
+            os.rename('{}/{}.html'.format(config.get('main', 'OutputPath'), i),
                       '{}/{}.html'.format(config.get('main', 'OutputPath'), i+1))
-		except OSError:
-			pass
+        except OSError:
+            pass
 
     try:
         os.rename('{}/{}'.format(config.get('main', 'OutputPath'), config.get('main', 'OutputFile')),
