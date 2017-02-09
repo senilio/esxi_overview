@@ -233,7 +233,7 @@ def main():
                                                     float(hosts[host]['numCores']) * 100)
 
 
-	# Shift historic files
+    # Shift historic files
     for i in range(46, 0, -1):
         try:
             os.rename('{}/{}.html'.format(config.get('main', 'OutputPath'), i),
