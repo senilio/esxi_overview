@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>{{ title }}</title>
+</head>
+
+<style type="text/css">
+    td { vertical-align:top; padding:0 5px 0 5px; }
+    body { font-family: monospace; }
+</style>
+
+<body>
+ Last update: {{ last_update }}
+ <br>
+ <br>
+ {# Create links to historical files #}
+   <a href="{{ filename }}" style="text-decoration:none">&middot;</a>
+   {%- for link in range(47) -%}
+   <a href="{{ link+1 }}.html" style="text-decoration:none">&middot;</a>
+   {%- endfor -%}
+
+ <table>
+  {% for host in hosts %}
+  {% if loop.index is not divisibleby 2 %}
+  <tr>
+  {% endif %}
+ <td>
+ <h3>
+ <img src="
+{%- if hosts[host]['health'] == 'green' -%}
+    img/green.png
+{%- elif hosts[host]['health'] == 'yellow' -%}
+    img/yellow.png
+{%- else -%}
+    img/red.png
+{%- endif -%} " height="14" width="14" title="Host health status: {{ hosts[host]['health'] }}">
+     <span title="{{ hosts[host]['fullName'] }}
+CPUs: {{ hosts[host]['numCpuPkgs'] }}
+CPU cores in total: {{ hosts[host]['numCores'] }}
+Threads: {{ hosts[host]['cpuThreads'] }}
+CPU model: {{ hosts[host]['cpuModel'] }}
+NICs: {{ hosts[host]['numNics'] }}">
+{{ host }} - {{ hosts[host]['vendor'] }} {{ hosts[host]['model'] }}</span></h3>
+ <b>CPU: {{ hosts[host]['cpuUsage'] }}/{{ hosts[host]['numCores'] }} </b>
+ ({{ hosts[host]['cpuUsagePercentage'] }}%)
+ <b>RAM: {{ hosts[host]['memoryUsage'] }}/{{ hosts[host]['memSize'] }} </b>
+ ({{ hosts[host]['memoryUsagePercentage'] }}%)
+ <b>VM's: </b>{{ hosts[host]['runningVMs'] }}
+ <br>
+ <br>
+ <table>
+ <tr>
+     <td><u>Virtual machine</u></td>
+     <td><center><u>Flags</u></td>
+     <td><center><u>CPU/RAM</u></td>
+     <td><center><u>IP</u></td>
+     <td><center><u>VLAN</u></td>
+     <td><u>Disk(s)</u></td>
+ </tr>
+ <tr>
+ {%- for vm in vms -%}
+     {%- if vms[vm]['host'] == host and vms[vm]['powerState'] == 'poweredOn' -%}
+        <td><span title="Uptime: {{ vms[vm]['uptime'] }}
+OS: {{ vms[vm]['guestName'] }}
+Tools: {{ vms[vm]['toolsRunning'] }}
+Mac: {% for mac in vms[vm]['networking']['mac'] %}{{ mac }} {% endfor %}
+">{{ vm }}</span></td>
+        <td>
+            <center>
+            {%- if vms[vm]['ballooning'] > 0 -%}
+            <font style="color:red" title="Ballooning: {{ vms[vm]['ballooning'] }} MB"><b>B</b></font>
+            {%- else -%}
+            <font style="color:lightgray" title="No ballooning">-</font>
+            {%- endif -%}
+            {%- if vms[vm]['swapping'] > 100 -%}
+            <font style="color:red" title="Swapping: {{ vms[vm]['swapping'] }} MB"><b>S</b></font>
+            {%- else -%}
+            <font style="color:lightgray" title="No swapping">-</font>
+            {%- endif -%}
+            {%- if vms[vm]['toolsVersion'] == 'guestToolsNotInstalled' -%}
+            <font style="color:OrangeRed" title="{{ vms[vm]['toolsVersion'] }}"><b>T</b></font>
+            {%- else -%}
+            <font style="color:lightgray" title="{{ vms[vm]['toolsVersion'] }}">-</font>
+            {%- endif -%}
+        </td>
+        <td><center><b>{{ vms[vm]['numCPU'] }}/{{ vms[vm]['memoryGB'] }}</b></td>
+        <td>{% for ip in vms[vm]['networking']['ip'] %}
+                {{ ip }} 
+                {% if ip|length > 1 %}
+                    <br> 
+                {% endif %}
+            {% endfor %}
+        </td>
+        <td>{% for vlan in vms[vm]['networking']['vlan'] %}
+                {{ vlan }} 
+                {% if vlan|length > 1 %}
+                    <br> 
+                {% endif %}
+            {% endfor %}
+        </td>
+        <td>{%- for disk in vms[vm]['disks']|sort -%}
+            <font title="{{ disk }}
+Size: {{ vms[vm]['disks'][disk]['size'] }} GB
+VMDK: {{ vms[vm]['disks'][disk]['file']  }}
+Thin provisioning: {{ vms[vm]['disks'][disk]['thin'] }}">
+                {{ vms[vm]['disks'][disk]['size'] }}
+            </font>
+            {%- endfor -%}
+        </td>
+     </tr>
+     {% endif %}
+ {% endfor %}
+ </table>
+ <br>
+ </td>
+ {% if loop.index is divisibleby 2 %}
+ </tr>
+ {% endif %}
+{% endfor %}
+</table>
+</body>
+</html>
+
