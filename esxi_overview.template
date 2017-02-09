@@ -101,8 +101,7 @@ Mac: {% for mac in vms[vm]['networking']['mac'] %}{{ mac }} {% endfor %}
         <td>{%- for disk in vms[vm]['disks']|sort -%}
             <font title="{{ disk }}
 Size: {{ vms[vm]['disks'][disk]['size'] }} GB
-VMDK: {{ vms[vm]['disks'][disk]['file']  }}
-Thin provisioning: {{ vms[vm]['disks'][disk]['thin'] }}">
+VMDK: {{ vms[vm]['disks'][disk]['file'] }}">
                 {{ vms[vm]['disks'][disk]['size'] }}
             </font>
             {%- endfor -%}
