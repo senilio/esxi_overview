@@ -51,7 +51,7 @@ def main():
         raise SystemExit("Unable to connect to host with supplied info.")
 
     # Get current time
-    current_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+    current_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S (%Z)')
 
     # VM properties to fetch
     vm_properties = ["name",
@@ -132,26 +132,26 @@ def main():
     # Return human readable uptime
     def return_uptime(seconds):
 		days = seconds / 86400
-		seconds -= 86400*days
+		seconds -= 86400 * days
 		hrs = seconds / 3600
-		seconds -= 3600*hrs
+		seconds -= 3600 * hrs
 		mins = seconds / 60
-		seconds -= 60*mins
+		seconds -= 60 * mins
 		if days >= 7:
-			return "%s days" %days
+			return '{} days'.format(days)
 		elif days >= 1 and days < 7:
-			return "%sd %sh" %(days,hrs)
+			return '{}d {}h'.format(days, hrs)
 		else:
-			return "%sh %sm" %(hrs,mins)
+			return '{}h {}m'.format(hrs, mins)
 
     # Return human readable mem size
     def memGB(MB):
 		if MB > 1000:
 			return MB/1024
 		elif MB < 1001:
-			return ".%s" %str(MB)[:1]
+			return '.{}'.format(str(MB)[:1])
 		else:
-			return "-"
+			return '-'
 
     # Host ID to hostname translation dictionary
     host_to_hostname = {}
@@ -228,14 +228,13 @@ def main():
             if vms[vm]['host'] == host and vms[vm]['powerState'] == 'poweredOn':
                 runningVMs += 1
 
-        hosts[host]['memoryUsage'] 				= memoryUsage / 1024
-        hosts[host]['cpuUsage']    				= vcpuUsage
-        hosts[host]['runningVMs']  				= runningVMs
-        hosts[host]['memoryUsagePercentage'] 	= int(float(hosts[host]['memoryUsage']) /
+        hosts[host]['memoryUsage']              = memoryUsage / 1024
+        hosts[host]['cpuUsage']                 = vcpuUsage
+        hosts[host]['runningVMs']               = runningVMs
+        hosts[host]['memoryUsagePercentage']    = int(float(hosts[host]['memoryUsage']) /
                                                     float(hosts[host]['memSize']) * 100)
-        hosts[host]['cpuUsagePercentage']    	= int(float(hosts[host]['cpuUsage']) /
+        hosts[host]['cpuUsagePercentage']       = int(float(hosts[host]['cpuUsage']) /
                                                     float(hosts[host]['numCores']) * 100)
-
 
     # Shift historic files, keep number of versions defined in ini file
     for i in range(int(config.get('main', 'History')), 1, -1):
@@ -251,7 +250,6 @@ def main():
     except OSError:
         pass
 
-    #print(vms)
     ### Start generating HTML
 
     # Capture our current directory
@@ -275,7 +273,6 @@ def main():
     )
 
     file.close()
-
 
 # Start program
 if __name__ == "__main__":
