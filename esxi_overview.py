@@ -238,10 +238,10 @@ def main():
 
 
     # Shift historic files, keep number of versions defined in ini file
-    for i in range(int(config.get('main', 'History')), 0, -1):
+    for i in range(int(config.get('main', 'History')), 1, -1):
         try:
-            os.rename('{}/{}.html'.format(config.get('main', 'OutputPath'), i),
-                      '{}/{}.html'.format(config.get('main', 'OutputPath'), i+1))
+            os.rename('{}/{}.html'.format(config.get('main', 'OutputPath'), i-1),
+                      '{}/{}.html'.format(config.get('main', 'OutputPath'), i))
         except OSError:
             pass
 
