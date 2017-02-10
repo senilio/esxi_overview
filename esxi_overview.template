@@ -26,14 +26,19 @@
   {% endif %}
  <td>
  <h3>
- <img src="
 {%- if hosts[host]['health'] == 'green' -%}
-    img/green.png
+    <font style="color:green" title="Host health status: {{ hosts[host]['health'] }}">
+    &#x2713; 
+    </font>
 {%- elif hosts[host]['health'] == 'yellow' -%}
-    img/yellow.png
+    <font style="color:yellow" title="Host health status: {{ hosts[host]['health'] }}">
+    &#x2717;
+    </font>
 {%- else -%}
-    img/red.png
-{%- endif -%} " height="14" width="14" title="Host health status: {{ hosts[host]['health'] }}">
+    <font style="color:red" title="Host health status: {{ hosts[host]['health'] }}">
+    &#x2717;
+    </font>
+{%- endif -%}
      <span title="{{ hosts[host]['fullName'] }}
 CPUs: {{ hosts[host]['numCpuPkgs'] }}
 CPU cores in total: {{ hosts[host]['numCores'] }}
