@@ -144,6 +144,7 @@ def main():
 		else:
 			return "%sh %sm" %(hrs,mins)
 
+    # Return human readable mem size
     def memGB(MB):
 		if MB > 1000:
 			return MB/1024
@@ -157,9 +158,10 @@ def main():
     for host in host_data:
         host_to_hostname[host['obj']] = host['name']
 
+    # Init dictionary of VMs
     vms = {}
 
-    # Populate vm dictionary
+    # Populate vms dictionary
     for vm in vm_data:
         vms[vm["name"]] = {}
         vms[vm["name"]]['numCPU']        = vm["config.hardware.numCPU"]
@@ -191,6 +193,8 @@ def main():
                 except AttributeError:
                     vms[vm["name"]]['disks'][device.deviceInfo.label] = {
                         'thin' : 'false'}
+
+    # Init dictionary of hosts
     hosts = {}
 
     # Populate host dictionary
@@ -211,7 +215,7 @@ def main():
         hosts[host["name"]]["numNics"]          = host["summary.hardware.numNics"]
         hosts[host["name"]]["health"]           = host["summary.overallStatus"]
 
-    # Calculate extra parameters to avoid doing calculations in template
+    # Calculate extra parameters to avoid doing too many calculations in template
     for host in hosts:
         memoryUsage = 0
         vcpuUsage = 0
@@ -233,8 +237,8 @@ def main():
                                                     float(hosts[host]['numCores']) * 100)
 
 
-    # Shift historic files
-    for i in range(46, 0, -1):
+    # Shift historic files, keep number of versions defined in ini file
+    for i in range(int(config.get('main', 'History')), 0, -1):
         try:
             os.rename('{}/{}.html'.format(config.get('main', 'OutputPath'), i),
                       '{}/{}.html'.format(config.get('main', 'OutputPath'), i+1))
@@ -266,7 +270,8 @@ def main():
         last_update=current_time,
         vms=collections.OrderedDict(sorted(vms.items())),
         hosts=collections.OrderedDict(sorted(hosts.items())),
-        filename=config.get('main', 'OutputFile'))
+        filename=config.get('main', 'OutputFile'),
+        instances=int(config.get('main', 'History')))
     )
 
     file.close()
