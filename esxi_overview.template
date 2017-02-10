@@ -15,7 +15,7 @@
  <br>
  {# Create links to historical files #}
    <a href="{{ filename }}" style="text-decoration:none">&middot;</a>
-   {%- for link in range(47) -%}
+   {%- for link in range(instances) -%}
    <a href="{{ link+1 }}.html" style="text-decoration:none">&middot;</a>
    {%- endfor -%}
 
