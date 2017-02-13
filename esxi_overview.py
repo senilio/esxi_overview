@@ -187,10 +187,10 @@ def main():
                        'size' : device.capacityInKB / 1024 / 1024,
                        'file' : device.backing.fileName}
                 try:
-                    if device.backing.thinProvisioned:
+                    if thinProvisioned in device.backing:
                         vms[vm["name"]]['disks'][device.deviceInfo.label] = {
-                            'thin' : device.backing.thinProvisioned}
-                except AttributeError:
+                            'thin' : str(device.backing.thinProvisioned)}
+                except:
                     vms[vm["name"]]['disks'][device.deviceInfo.label] = {
                         'thin' : 'false'}
 
