@@ -186,10 +186,10 @@ def main():
                 vms[vm["name"]]['disks'][device.deviceInfo.label] = {
                        'size' : device.capacityInKB / 1024 / 1024,
                        'file' : device.backing.fileName}
+                # Condition needed for thin provisioning due to RDM's missing the parameter
                 try:
-                    if thinProvisioned in device.backing:
-                        vms[vm["name"]]['disks'][device.deviceInfo.label]['thin'] = device.backing.thinProvisioned
-                except:
+                    vms[vm["name"]]['disks'][device.deviceInfo.label]['thin'] = device.backing.thinProvisioned
+                except IndexError:
                     vms[vm["name"]]['disks'][device.deviceInfo.label]['thin'] = False
 
     # Init dictionary of hosts
