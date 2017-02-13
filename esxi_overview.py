@@ -188,11 +188,9 @@ def main():
                        'file' : device.backing.fileName}
                 try:
                     if thinProvisioned in device.backing:
-                        vms[vm["name"]]['disks'][device.deviceInfo.label] = {
-                            'thin' : str(device.backing.thinProvisioned)}
+                        vms[vm["name"]]['disks'][device.deviceInfo.label]['thin'] = device.backing.thinProvisioned
                 except:
-                    vms[vm["name"]]['disks'][device.deviceInfo.label] = {
-                        'thin' : 'false'}
+                    vms[vm["name"]]['disks'][device.deviceInfo.label]['thin'] = False
 
     # Init dictionary of hosts
     hosts = {}
