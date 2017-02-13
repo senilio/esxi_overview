@@ -189,7 +189,7 @@ def main():
                 # Condition needed for thin provisioning due to RDM's missing the parameter
                 try:
                     vms[vm["name"]]['disks'][device.deviceInfo.label]['thin'] = device.backing.thinProvisioned
-                except IndexError:
+                except AttributeError:
                     vms[vm["name"]]['disks'][device.deviceInfo.label]['thin'] = False
 
     # Init dictionary of hosts
