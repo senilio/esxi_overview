@@ -51,7 +51,7 @@ def main():
         raise SystemExit("Unable to connect to host with supplied info.")
 
     # Get current time
-    current_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S (%Z)')
+    current_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 
     # VM properties to fetch
     vm_properties = ["name",
