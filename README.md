@@ -1,7 +1,7 @@
 # ESXi overview
  
 ### What's this?
-This script polls your vCenter server for a bunch of information, which is gathers in a huge dictionary. The information in the dictionary are then used as a
+This script polls your vCenter server for a bunch of information, which is collected in a huge dictionary. The information in the dictionary are then used as
  base for Jinja2 to generate a HTML page with details of your ESXi host(s)/cluster.
 
 ### Why?
