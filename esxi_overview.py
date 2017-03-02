@@ -12,6 +12,7 @@ import pchelper
 import collections
 import argparse
 import ConfigParser
+import re
 
 from datetime import datetime
 from jinja2 import Environment, Template, FileSystemLoader
@@ -55,6 +56,8 @@ def main():
 
     # VM properties to fetch
     vm_properties = ["name",
+                     "snapshot",
+                     "layoutEx.file",
                      "guest.hostName",
                      "config.guestFullName",
                      "summary.quickStats.overallCpuUsage",
@@ -153,6 +156,28 @@ def main():
 		else:
 			return '-'
 
+	# Return snapshot info
+    def get_snapshot_info(vm):
+        snapshot_dict = {}
+        disk_list = vm["layoutEx.file"]
+        size = 0
+        for disk in disk_list:
+			if disk.type == 'snapshotData':
+				size += disk.size
+			ss_disk = re.search('0000\d\d', disk.name)
+			if ss_disk:
+				size += disk.size
+
+        size_gb = (float(size) / 1024 / 1024 / 1024)
+        create_time = vm['snapshot'].rootSnapshotList[0].createTime
+
+        snapshot_dict['size']        = round(size_gb, 2)
+        snapshot_dict['description'] = vm['snapshot'].rootSnapshotList[0].description
+        snapshot_dict['created']     = create_time.strftime('%Y-%m-%d %H:%M:%S')
+        snapshot_dict['name']        = vm['snapshot'].rootSnapshotList[0].name
+
+        return snapshot_dict
+
     # Host ID to hostname translation dictionary
     host_to_hostname = {}
     for host in host_data:
@@ -160,6 +185,7 @@ def main():
 
     # Init dictionary of VMs
     vms = {}
+
 
     # Populate vms dictionary
     for vm in vm_data:
@@ -180,6 +206,12 @@ def main():
         vms[vm["name"]]['cpuUsage']      = vm["summary.quickStats"].overallCpuUsage
         vms[vm["name"]]['networking']    = get_network_info(vm['guest.net'])
         vms[vm["name"]]['disks']         = {}
+        vms[vm["name"]]['snapshot']     = {}
+
+        try:
+            vms[vm["name"]]["snapshot"] = get_snapshot_info(vm)
+        except KeyError:
+            pass
 
         for device in vm['config.hardware.device']:
             if type(device).__name__ == 'vim.vm.device.VirtualDisk':

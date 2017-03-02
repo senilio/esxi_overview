@@ -78,7 +78,7 @@ Mac: {% for mac in vms[vm]['networking']['mac'] %}{{ mac }} {% endfor %}
             <font style="color:lightgray" title="No ballooning">-</font>
             {%- endif -%}
             {%- if vms[vm]['swapping'] > 100 -%}
-            <font style="color:red" title="Swapping: {{ vms[vm]['swapping'] }} MB"><b>S</b></font>
+            <font style="color:Orange" title="Swapping: {{ vms[vm]['swapping'] }} MB"><b>S</b></font>
             {%- else -%}
             <font style="color:lightgray" title="No swapping">-</font>
             {%- endif -%}
@@ -86,6 +86,14 @@ Mac: {% for mac in vms[vm]['networking']['mac'] %}{{ mac }} {% endfor %}
             <font style="color:OrangeRed" title="{{ vms[vm]['toolsVersion'] }}"><b>T</b></font>
             {%- else -%}
             <font style="color:lightgray" title="{{ vms[vm]['toolsVersion'] }}">-</font>
+            {%- endif -%}
+            {%- if vms[vm]['snapshot'] != {} -%}
+            <font style="color:SteelBlue" title="Snapshot size: {{ vms[vm]['snapshot']['size'] }} GB
+Name: {{ vms[vm]['snapshot']['name'] }}
+Description: {{ vms[vm]['snapshot']['description'] }}
+Created: {{ vms[vm]['snapshot']['created'] }}"><b>S</b></font>
+            {%- else -%}
+            <font style="color:lightgray" title="No snapshot">-</font>
             {%- endif -%}
         </td>
         <td><center><b>{{ vms[vm]['numCPU'] }}/{{ vms[vm]['memoryGB'] }}</b></td>
