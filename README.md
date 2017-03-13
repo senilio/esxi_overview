@@ -1,5 +1,7 @@
 # ESXi overview
  
+![Alt text](screenshot.jpg?raw=true "Included template will look something like this...")
+
 ### What's this?
 This script polls your vCenter server for a bunch of information, which is collected in a huge dictionary. The information in the dictionary are then used as
  base for Jinja2 to generate a HTML page with details of your ESXi host(s)/cluster.
