@@ -7,6 +7,10 @@
 <style type="text/css">
     td { vertical-align:top; padding:0 5px 0 5px; }
     body { font-family: monospace; }
+    table.style1 tr:nth-child(even) { 
+        background-color: #f4f4f4;
+    }
+
 </style>
 
 <body>
@@ -53,7 +57,7 @@ NICs: {{ hosts[host]['numNics'] }}">
  <b>VM's: </b>{{ hosts[host]['runningVMs'] }}
  <br>
  <br>
- <table>
+ <table class="style1">
  <tr>
      <td><u>Virtual machine</u></td>
      <td><center><u>Flags</u></td>
@@ -112,12 +116,19 @@ Created: {{ vms[vm]['snapshot']['created'] }}"><b>S</b></font>
             {% endfor %}
         </td>
         <td>{%- for disk in vms[vm]['disks']|sort -%}
-            <font title="{{ disk }}
+               {% if loop.index < 4 %}
+               <font title="{{ disk }}
 Size: {{ vms[vm]['disks'][disk]['size'] }} GB
 VMDK: {{ vms[vm]['disks'][disk]['file'] }}
 Thin provisioning: {{ vms[vm]['disks'][disk]['thin'] }}">
-                {{ vms[vm]['disks'][disk]['size'] }}
-            </font>
+                   {{ vms[vm]['disks'][disk]['size'] }}
+               </font>
+                {%- else -%}
+               <font title="{{ disk }}
+Size: {{ vms[vm]['disks'][disk]['size'] }} GB
+VMDK: {{ vms[vm]['disks'][disk]['file'] }}
+Thin provisioning: {{ vms[vm]['disks'][disk]['thin'] }}">.</font>
+                {%- endif -%}
             {%- endfor -%}
         </td>
      </tr>
