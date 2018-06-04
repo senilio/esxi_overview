@@ -71,8 +71,12 @@ NICs: {{ hosts[host]['numNics'] }}">
      {%- if vms[vm]['host'] == host and vms[vm]['powerState'] == 'poweredOn' -%}
         <td><span title="Uptime: {{ vms[vm]['uptime'] }}
 OS: {{ vms[vm]['guestName'] }}
+Hardware version: {{ vms[vm]['hwVersion'] }}
 Tools: {{ vms[vm]['toolsRunning'] }}
-Mac: {% for mac in vms[vm]['networking']['mac'] %}{{ mac }} {% endfor %}
+Mac: {% for mac in vms[vm]['networking']['mac'] %}{{ mac }} 
+NIC type: {{ vms[vm]['networking']['type'] }}
+
+Annotation: {{ vms[vm]['annotation'] }} {% endfor %}
 ">{{ vm }}</span></td>
         <td>
             <center>
@@ -102,7 +106,7 @@ Created: {{ vms[vm]['snapshot']['created'] }}"><b>S</b></font>
         </td>
         <td><center><b>{{ vms[vm]['numCPU'] }}/{{ vms[vm]['memoryGB'] }}</b></td>
         <td>{% for ip in vms[vm]['networking']['ip'] %}
-                {{ ip }} 
+                {{ ip }}
                 {% if ip|length > 1 %}
                     <br> 
                 {% endif %}
