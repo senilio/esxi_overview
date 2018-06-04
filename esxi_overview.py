@@ -76,7 +76,9 @@ def main():
                      "guest.net",
                      "guest.guestState",
                      "config.guestId",
-                     "config.version"]
+                     "config.version",
+                     "runtime",
+                     "config"]
 
     # Host properties to fetch
     host_properties = ["config.product.fullName",
@@ -103,6 +105,8 @@ def main():
                                           path_set=vm_properties,
                                           include_mors=True)
 
+    #print(vm_data)
+
     host_view = pchelper.get_container_view(service_instance,
                                        obj_type=[vim.HostSystem])
     host_data = pchelper.collect_properties(service_instance, view_ref=host_view,
@@ -114,9 +118,11 @@ def main():
     def get_network_info(guest_net):
         networking = {}
         for nic in guest_net:
+            #print(nic)
             networking['vlan'] = []
             networking['mac']  = []
             networking['ip']   = []
+            networking['deviceid'] = []
 
             if nic.ipAddress:
                 for i in nic.ipAddress:
@@ -129,7 +135,10 @@ def main():
             if nic.macAddress:
                 networking['mac'].append(nic.macAddress)
 
-		return(networking)
+            if nic.deviceConfigId:
+                networking['deviceid'].append(nic.deviceConfigId)
+
+        return(networking)
 
 
     # Return human readable uptime
@@ -186,7 +195,6 @@ def main():
     # Init dictionary of VMs
     vms = {}
 
-
     # Populate vms dictionary
     for vm in vm_data:
         vms[vm["name"]] = {}
@@ -199,10 +207,17 @@ def main():
         vms[vm["name"]]['swapping']      = vm["summary.quickStats"].swappedMemory
         vms[vm["name"]]['guestName']     = vm["config.guestFullName"]
         vms[vm["name"]]['hwVersion']     = vm["config.version"]
-        vms[vm["name"]]['annotation']    = vm[u"config.annotation"]
+        try:
+            vms[vm["name"]]['annotation']    = vm[u"config.annotation"]
+        except KeyError:
+            vms[vm["name"]]['annotation']  = "" 
         vms[vm["name"]]['uptime']        = return_uptime(vm["summary.quickStats"].uptimeSeconds)
-        vms[vm["name"]]['toolsVersion']  = vm["guest.toolsVersionStatus"]
-        vms[vm["name"]]['toolsRunning']  = vm["guest.toolsRunningStatus"]
+        try:
+            vms[vm["name"]]['toolsVersion']  = vm["guest.toolsVersionStatus"]
+            vms[vm["name"]]['toolsRunning']  = vm["guest.toolsRunningStatus"]
+        except KeyError:
+            vms[vm["name"]]['toolsVersion']  = "Information not available"
+            vms[vm["name"]]['toolsRunning']  = "Information not available"
         vms[vm["name"]]['cpuUsage']      = vm["summary.quickStats"].overallCpuUsage
         vms[vm["name"]]['networking']    = get_network_info(vm['guest.net'])
         vms[vm["name"]]['disks']         = {}
@@ -223,6 +238,15 @@ def main():
                     vms[vm["name"]]['disks'][device.deviceInfo.label]['thin'] = device.backing.thinProvisioned
                 except AttributeError:
                     vms[vm["name"]]['disks'][device.deviceInfo.label]['thin'] = False
+
+            if type(device).__name__ == 'vim.vm.device.VirtualE1000':
+                vms[vm["name"]]['networking']['type'] = 'E1000'
+
+            if type(device).__name__ == 'vim.vm.device.VirtualE1000e':
+                vms[vm["name"]]['networking']['type'] = 'E1000e'
+
+            if type(device).__name__ == 'vim.vm.device.VirtualVmxnet3':
+                vms[vm["name"]]['networking']['type'] = 'Vmxnet3'
 
     # Init dictionary of hosts
     hosts = {}
